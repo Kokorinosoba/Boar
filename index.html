@@ -1,0 +1,120 @@
+<html class="gr__reona396_webcrow_jp"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script src="./processing-1.3.6.min.js"></script>
+<script type="text/javascript">
+$(function () {
+	sizing();
+	$(window).resize(function() {
+		sizing();
+	});
+});
+
+function sizing(){
+	$("#main").attr({height:$("#wrapper").height()});
+	$("#main").attr({width:$("#wrapper").width()});
+}
+</script>
+<style type="text/css">
+body{
+	margin: 0px;
+	padding: 0px;
+	position: relative;
+}
+
+body #wrapper{
+	width: 100%;
+	height: 100%;
+	position: fixed;
+}
+
+*:focus{
+  outline:none;
+}
+
+</style>
+
+<script type="application/processing" data-processing-target="pjs">
+  final int max_r = 10;
+  final int min_r = 1;
+  final int max_z = 20;
+  final int min_z = 0;
+  final int max_ys = 3;
+  final int min_ys = 1;
+  
+  final int num = 500; 
+  int wind = 0;
+  Boolean flag = false;
+  
+  Snow[] snows = new Snow[num];
+  
+  void setup() {
+    size(800, 600);
+    colorMode(HSB, 360, 100, 100, 100);
+  
+  
+    background(0);
+    smooth();
+    noStroke();
+    fill(255, 100);
+  
+    for (int i=0; i<num; i++) {
+      snows[i]= new Snow(i);
+    }
+  }
+  
+  void draw() {
+    background(0);
+    for (int i=0; i<num; i++) {
+      snows[i].fall(wind);
+      snows[i].show();
+    }
+  }
+  
+  void keyPressed() {
+  
+    if (keyCode == RIGHT && flag==false && wind<10) {
+      wind++;
+      flag=true;
+    } else if (keyCode == LEFT && flag==false && wind>-10) {
+      wind--; 
+      flag=true;
+    }
+  }
+  
+  void keyReleased() {
+    flag=false;
+  }
+  class Snow {
+    float x = random(-width/2-wind*100, width+width/2-wind*100);
+    float y = random(-height, 0);
+    float z = random(min_z, max_z);
+    float r = map(this.z, min_z, max_z, min_r, max_r);
+    float yspeed = map(this.z, min_z, max_z, min_ys, max_ys);
+    int my_num;
+  
+    Snow(int i) {
+      my_num = i;
+    }
+  
+    void fall(int wind) {
+      y = y + yspeed; 
+      if (y > 0) {
+        x += wind * map(z, min_z, max_z, 0.3, 1);
+      }
+  
+      if (frameCount%20==0) {
+        x += random(-1.5, 1.5);
+      }
+      if (y > height) {
+        snows[my_num] = new Snow(my_num);
+      }
+    }
+    void show() {
+      ellipse(x, y, r, r);
+    }
+  }
+</script>
+</head>
+<body bgcolor="black" data-gr-c-s-loaded="true">
+<div id="wrapper">
+<canvas id="pjs" tabindex="0" width="680" height="717" style="image-rendering: -webkit-optimize-contrast !important;"><br></canvas>
+</div>
